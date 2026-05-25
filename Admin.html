@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simplle Drive — Panel Admin</title>
+<link rel="icon" type="image/png" href="assets/img/logo-color.png">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/app.css">
+<style>
+  .sd-form-grid { grid-template-columns: 1.4fr 1fr; }
+  @media (max-width: 980px) { .sd-form-grid { grid-template-columns: 1fr !important; } }
+  @media (max-width: 980px) { .sd-leads-grid { grid-template-columns: 1fr !important; } }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script src="src/store.js"></script>
+  <script src="src/i18n.js"></script>
+
+  <!-- Shared bits (LangSwitch, WhatsAppGlyph, Toast) -->
+  <script type="text/babel" src="src/site/Shared.jsx"></script>
+
+  <!-- Admin -->
+  <script type="text/babel" src="src/admin/AdminLogin.jsx"></script>
+  <script type="text/babel" src="src/admin/AdminShell.jsx"></script>
+  <script type="text/babel" src="src/admin/AdminDashboard.jsx"></script>
+  <script type="text/babel" src="src/admin/AdminVehicles.jsx"></script>
+  <script type="text/babel" src="src/admin/AdminVehicleForm.jsx"></script>
+  <script type="text/babel" src="src/admin/AdminSettings.jsx"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function App() {
+      // Admin runs in Portuguese only.
+      const lang = 'pt';
+      const setLang = () => {};
+      const t = window.SD_TRANSLATIONS.pt;
+      const [view, setView] = useState('dashboard'); // dashboard | vehicles | settings
+      const [editingId, setEditingId] = useState(null);
+      const [toast, setToast] = useState(null);
+      const [authed, setAuthed] = useState(() => window.adminCheckAuth());
+
+      useEffect(() => { document.documentElement.lang = lang; }, []);
+
+      const showToast = (msg, ms = 2400) => {
+        setToast(msg);
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => setToast(null), ms);
+      };
+
+      const openEdit = (id) => { setView('vehicles'); setEditingId(id || 'new'); };
+      const onNew = () => openEdit('new');
+      const onSaved = () => {
+        setEditingId(null);
+        showToast(t.toast_saved);
+      };
+
+      if (!authed) {
+        return <AdminLogin onSuccess={() => setAuthed(true)} />;
+      }
+
+      let content;
+      if (view === 'dashboard') {
+        content = <AdminDashboard lang={lang} onOpen={(k) => { setView(k); setEditingId(null); }} />;
+      } else if (view === 'vehicles') {
+        if (editingId) {
+          content = <AdminVehicleForm lang={lang} vehicleId={editingId} onBack={() => setEditingId(null)} onSaved={onSaved} />;
+        } else {
+          content = <AdminVehicles lang={lang} onEdit={openEdit} onNew={onNew} />;
+        }
+      } else if (view === 'settings') {
+        content = <AdminSettings lang={lang} />;
+      } else {
+        // fallback (e.g. removed 'leads' route) → bounce to dashboard
+        content = <AdminDashboard lang={lang} onOpen={(k) => { setView(k); setEditingId(null); }} />;
+      }
+
+      return (
+        <React.Fragment>
+          <AdminShell lang={lang} setLang={setLang} view={view} setView={setView}
+            editingId={editingId} setEditingId={setEditingId}>
+            {content}
+          </AdminShell>
+          <Toast message={toast} />
+        </React.Fragment>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simplle Drive — Maneja hoy mismo.</title>
+<link rel="icon" type="image/png" href="assets/img/logo-color.png">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script src="src/store.js"></script>
+  <script src="src/i18n.js"></script>
+
+  <script type="text/babel" src="src/site/Shared.jsx"></script>
+  <script type="text/babel" src="src/site/SiteHeader.jsx"></script>
+  <script type="text/babel" src="src/site/Hero.jsx"></script>
+  <script type="text/babel" src="src/site/WhyUs.jsx"></script>
+  <script type="text/babel" src="src/site/Showcase.jsx"></script>
+  <script type="text/babel" src="src/site/Featured.jsx"></script>
+  <script type="text/babel" src="src/site/Contact.jsx"></script>
+  <script type="text/babel" src="src/site/SiteFooter.jsx"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    function App() {
+      const { lang, setLang, t } = window.useI18n();
+      const [toast, setToast] = useState(null);
+
+      useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+
+      const showToast = (msg, ms = 4200) => {
+        setToast(msg);
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => setToast(null), ms);
+      };
+
+      const onNavigate = (id) => {
+        if (id === 'top') { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.getBoundingClientRect().top + window.scrollY - 70;
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
+      };
+
+      const onInterest = (v) => {
+        const label = `${v.make} ${v.model} ${v.year}`;
+        const intro = { es: 'Hola Simplle Drive!', en: 'Hi Simplle Drive!', pt: 'Oi Simplle Drive!' }[lang];
+        const text = `${intro} ${t.iAmInterested}: ${label} ($${v.price}${v.type === 'rent' ? '/wk' : ' total'})`;
+        const url = `https://wa.me/13055550100?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank', 'noopener');
+        showToast(t.toast_sent(label));
+      };
+
+      const onWhatsApp = (preset) => {
+        const intro = { es: 'Hola Simplle Drive!', en: 'Hi Simplle Drive!', pt: 'Oi Simplle Drive!' }[lang];
+        const text = preset
+          ? `${intro} ${preset}.`
+          : `${intro}`;
+        const url = `https://wa.me/13055550100?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank', 'noopener');
+        showToast({ es: 'Abriendo WhatsApp…', en: 'Opening WhatsApp…', pt: 'Abrindo WhatsApp…' }[lang], 2200);
+      };
+
+      return (
+        <div>
+          <SiteHeader lang={lang} setLang={setLang} onNavigate={onNavigate} />
+          <Hero      lang={lang} onNavigate={onNavigate} onWhatsApp={onWhatsApp} />
+          <WhyUs     lang={lang} />
+          <Showcase  lang={lang} mode="rent" onInterest={onInterest} />
+          <Showcase  lang={lang} mode="sale" onInterest={onInterest} />
+          <Featured  lang={lang} onInterest={onInterest} />
+          <Contact   lang={lang} onWhatsApp={onWhatsApp} />
+          <SiteFooter lang={lang} />
+          <StickyWA onClick={onWhatsApp} />
+          <Toast message={toast} />
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simplle Drive</title>
+<link rel="icon" type="image/png" href="assets/img/logo-color.png">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--sd-cream); min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+  .wrap { max-width: 1080px; width: 100%; }
+  .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
+  .head img { height: 44px; display: block; }
+  .head .note { font-size: 13px; color: var(--sd-ink-3); letter-spacing: .02em; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+
+  .tile {
+    position: relative; overflow: hidden;
+    border-radius: 24px; padding: 36px;
+    color: #fff; text-decoration: none;
+    box-shadow: var(--shadow-lg);
+    transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+    display: flex; flex-direction: column; gap: 14px; min-height: 320px;
+  }
+  .tile:hover { transform: translateY(-4px); box-shadow: 0 26px 60px rgba(10,58,98,.22), 0 6px 16px rgba(17,17,17,.08); }
+  .tile.site  { background: var(--sd-blue-deep); }
+  .tile.admin { background: var(--sd-green); }
+
+  .tile .eyebrow {
+    font-family: var(--font-ui); font-size: 11px; font-weight: 700;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--sd-green-warm);
+  }
+  .tile.admin .eyebrow { color: #fff; opacity: .75; }
+  .tile h2 {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: clamp(40px, 5vw, 64px); line-height: .95;
+    letter-spacing: -.01em; text-transform: uppercase;
+    margin: 0; text-wrap: balance;
+    color: #fff;
+  }
+  .tile p { font-size: 15px; opacity: .9; max-width: 380px; margin: 0; line-height: 1.5; color: #fff; }
+  .tile .arrow {
+    margin-top: auto; align-self: flex-start;
+    width: 56px; height: 56px; border-radius: 999px;
+    background: #fff; color: var(--sd-ink);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: transform 220ms var(--ease-out);
+  }
+  .tile:hover .arrow { transform: translateX(6px); }
+
+  .tile .lock {
+    position: absolute; top: 24px; right: 24px;
+    background: rgba(255,255,255,.15); padding: 6px 10px; border-radius: 999px;
+    font-family: var(--font-ui); font-size: 11px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <img src="assets/img/logo-color.png" alt="Simplle Drive">
+      <div class="note">Built for us · Hecho para nosotros · Feito para nós</div>
+    </div>
+
+    <div class="grid">
+      <a href="Site.html" class="tile site">
+        <div class="eyebrow">Public · Sitio · Site</div>
+        <h2>Maneja<br>hoy mismo.</h2>
+        <p>The public site — hero, fleet for rent &amp; for sale, featured picks, contact form, trilingual EN/ES/PT.</p>
+        <span class="arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </span>
+      </a>
+
+      <a href="Admin.html" class="tile admin">
+        <span class="lock">Internal</span>
+        <div class="eyebrow">Admin · Painel · Panel</div>
+        <h2>Manage<br>the fleet.</h2>
+        <p>Dashboard, listings, photo upload, leads inbox. Live-synced with the site through a shared mock store.</p>
+        <span class="arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </span>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
